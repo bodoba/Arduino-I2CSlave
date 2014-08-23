@@ -28,8 +28,9 @@
 
 /*
  * uncomment to enable verbose I2C Debug output
+ */
+
 #define I2C_DEBUG
-*/
 
 /* 
  * uncomment if you intend to use sonar sensors. 

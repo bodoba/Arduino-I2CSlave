@@ -57,9 +57,6 @@ void I2CSlaveClass::begin ( int slaveAddress )
     status     = 0;
     inputPorts = 0;
     outBytes   = 0;
-#ifdef USE_SONAR
-    sonarPort  = 0;
-#endif
     
     // Register device as i2c slave
     Wire.begin(slaveAddress);
@@ -149,7 +146,9 @@ void I2CSlaveClass::receiveData( int count )
             
 #ifdef USE_SONAR
         case I2CCMD_SET_SONAR_PORT:
-            
+            I2CSlave.setSonarPort( word(inBuffer[2],inBuffer[1]), word(inBuffer[4],inBuffer[3]) );
+            I2CSlave.outBuffer[0]=ARDUINO_OK;
+            I2CSlave.outBytes=1;
             break;
 
         case I2CCMD_GET_SONAR_READING:
@@ -337,10 +336,37 @@ void I2CSlaveClass::setServoUSec ( int value, unsigned char servo ) {
     DEBUG_PRINTLN(value);
 }
 
-
 #ifdef USE_SONAR
-void I2CSlaveClass::getSonarReading (unsigned char *buffer) {
-    
+void I2CSlaveClass::getSonarReading (unsigned char *data) {
+    int cm;
+    DEBUG_PRINTLN("AA");
+    cm = sonar->ping_cm();
+    DEBUG_PRINTLN("BB");
+    data[0] = (unsigned char)  (cm & 0x00ff);
+    data[1] = (unsigned char) ((cm & 0xff00) >> 8 );
+#ifdef I2C_DEBUG
+    Serial.print ( "Sonar distance " );
+    Serial.print ( cm );
+    Serial.println ( "cm" );
+#endif
+}
+
+void I2CSlaveClass::setSonarPort (int mask, int distance) {
+    int bit=0;
+    int sonarPort;
+    for ( int bit = 0 ; bit < 13; bit++ ) {
+        if ( mask & ( 1 << bit ) ) {
+            sonarPort = bit+1;
+#ifdef I2C_DEBUG
+            Serial.print ( "Sonar Port: " );
+            Serial.print ( bit+1 );
+            Serial.print ( " Max Dist: " );
+            Serial.println ( distance );
+#endif
+            *sonar = NewPing(sonarPort, sonarPort, distance);
+            break;
+        }
+    }
 }
 #endif
 

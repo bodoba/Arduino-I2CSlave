@@ -24,6 +24,9 @@
 #include <Wire.h>
 #include <Servo.h>
 #include <I2CSlaveCommon.h>
+#ifdef USE_SONAR
+#include <NewPing.h>
+#endif
 
 #ifndef I2CSlaveClass_h
 #define I2CSlaveClass_h
@@ -39,7 +42,6 @@ public:
     static void receiveData (int);
     static void sendData    (void);
     
-    
 private:
     Servo ServoA;
     Servo ServoB;
@@ -52,18 +54,18 @@ private:
     unsigned char status;
     
 #ifdef USE_SONAR
-    int  sonarPort;
+    NewPing *sonar;
+    void setSonarPort (int, int);
     void getSonarReading (unsigned char *);
 #endif
     
     void setIOPortMode (int, int);
-    void setIOPortModeServo ( int, unsigned char );
+    void setIOPortModeServo (int, unsigned char);
     void setIOPort (int, int);
     void getIOPorts (unsigned char *);
-    void setServoValue ( int, unsigned char );
-    void setServoUSec ( int, unsigned char );
+    void setServoValue (int, unsigned char);
+    void setServoUSec (int, unsigned char);
 };
 
 extern I2CSlaveClass I2CSlave;
-
 #endif
