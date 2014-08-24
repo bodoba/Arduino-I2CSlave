@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <math.h>
+#include <time.h>
 
 #include "ArduinoSlave/I2CSlaveCommon.h"
 #include "ArduinoSlave/ArduinoSlave.h"
@@ -35,18 +36,43 @@ int main(int argc, char **argv)
     }
 
     usleep(5000);
+    bool leftLED       = FALSE;
+    bool rightLED      = FALSE;
+    bool buttonPressed = FALSE;
+    time_t now, past=(time_t)0;
+    int inputPorts;
     
-    bool blink=FALSE;
     while ( TRUE ) {
-        if ( blink ) {
-          arduino.setIoPortHigh(LED_LEFT);
-          arduino.setIoPortLow(LED_RIGHT);
-        } else {
-          arduino.setIoPortHigh(LED_RIGHT);
-          arduino.setIoPortLow(LED_LEFT);
+        // blink left LED once a second
+        now=time(NULL);
+        if ( now != past ) {
+            if ( leftLED ) {
+                arduino.setIoPortHigh(LED_LEFT);
+            } else {
+                arduino.setIoPortLow(LED_LEFT);
+            }
+            leftLED = !leftLED;
+            past = now;
         }
-        blink = !blink;
-        sleep(1);
+        
+        // Toggle right LED on button release
+        inputPorts=arduino.getIoPorts();
+        if ( buttonPressed ) {
+            if ( inputPorts & BUTTON ) {
+                if ( rightLED ) {
+                    arduino.setIoPortHigh(LED_RIGHT);
+                } else {
+                    arduino.setIoPortLow(LED_RIGHT);
+                }
+                rightLED = !rightLED;
+                buttonPressed = FALSE;
+            }
+        } else if ( !(inputPorts & BUTTON) ) {
+            buttonPressed = TRUE;
+        }
+        
+        // give ARDUINO some rest
+        usleep(10000);
     }
     return 0;
 }
