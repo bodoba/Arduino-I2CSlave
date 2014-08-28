@@ -30,7 +30,7 @@
  * uncomment to enable verbose I2C Debug output
  */
 
-#define I2C_DEBUG
+//#define I2C_DEBUG
 
 /* 
  * uncomment if you intend to use sonar sensors. 
@@ -50,9 +50,7 @@
 #define I2CCMD_GET_IO_PORTS              7
 #define I2CCMD_SET_SERVO_USEC            8
 #define I2CCMD_GET_STATUS                9
-#define I2CCMD_SET_SONAR_PORT           10
-#define I2CCMD_GET_SONAR_READING        11
-#define I2CCMD_GET_ANALOG_READING       12
+#define I2CCMD_GET_ANALOG_READING       10
 
 /*
  * IO Port Mode

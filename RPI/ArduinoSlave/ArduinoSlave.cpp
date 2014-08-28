@@ -158,36 +158,6 @@ uint16_t ArduinoSlave::getIoPorts ( void ) {
     return (ioPorts);
 }
 
-#ifdef USE_SONAR
-bool ArduinoSlave::setSonarPort( uint16_t port, uint16_t maxDistance ) {
-    uint8_t data[5];
-    bool    success;
-    
-    data[0] = (unsigned char)  (port & 0x00ff);
-    data[1] = (unsigned char) ((port & 0xff00) >> 8 );
-    data[2] = (unsigned char)  (maxDistance & 0x00ff);
-    data[3] = (unsigned char) ((maxDistance & 0xff00) >> 8 );
-    success = i2cWriteCmd(I2CCMD_SET_SONAR_PORT, 4, data);
-    usleep(ARDUINO_DELAY);
-    return (checkResponse ("ArduinoSlave::setSonarPort", success ));
-}
-
-uint16_t ArduinoSlave::getSonarReading( void ) {
-    bool     success = FALSE;
-    uint8_t  data[2] = {0,0};
-    uint16_t sonarReading;
-    
-    if ( i2cWriteCmd(I2CCMD_GET_SONAR_READING, 0, NULL) ) {
-        success = i2cReadBytes(2, data);
-    }
-    if ( !success ) {
-        fprintf(stderr, "[ERROR] ArduinoSlave::getSonarReading(...) failed. %s\n", i2cErrorString);
-    }
-    sonarReading = ( data[0] & 0x00ff ) | ((data[1] << 8) & 0xff00 );
-    return (sonarReading);
-}
-#endif
-
 bool ArduinoSlave::i2cWriteCmd( uint8_t command, uint8_t length, uint8_t *data ) {
     int8_t buf[ARDUINO_BUFFER_SIZE];
     int8_t count=0;

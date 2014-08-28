@@ -10,24 +10,22 @@
 #define I2C_ARDUINO 0x04
 #define I2C_DEVICE  "/dev/i2c-1"
 
-#define LED_RIGHT    ARDUINO_IO_PORT_08
-#define LED_LEFT     ARDUINO_IO_PORT_09
+#define LED_RED      ARDUINO_IO_PORT_08
+#define LED_GREEN    ARDUINO_IO_PORT_09
 
 #define BUTTON       ARDUINO_IO_PORT_07
-#define SONAR        ARDUINO_IO_PORT_06
-
 
 int main(int argc, char **argv)
 {
     ArduinoSlave arduino( I2C_ARDUINO, I2C_DEVICE );
 
     // LED Ports
-    if ( !arduino.setIoPortModeOutput(LED_RIGHT | LED_LEFT)) {
+    if ( !arduino.setIoPortModeOutput(LED_RED | LED_GREEN)) {
         printf ("[FATAL] Could not set up LED ports\n");
         exit(1);
     }
-    arduino.setIoPortLow(LED_RIGHT);
-    arduino.setIoPortLow(LED_LEFT);
+    arduino.setIoPortLow(LED_RED);
+    arduino.setIoPortLow(LED_GREEN);
     usleep(5000);
     
     // Input ports
@@ -37,43 +35,36 @@ int main(int argc, char **argv)
     }
     usleep(5000);
     
-    // Sonar
-    if ( !arduino.setSonarPort(SONAR,50)) {
-        printf ("[FATAL] Could not set up Sonar port\n");
-        exit(1);
-    }
-    usleep(5000);
-    
-    
-    bool leftLED       = FALSE;
-    bool rightLED      = FALSE;
+    bool ledGreen      = FALSE;
+    bool ledRed        = FALSE;
     bool buttonPressed = FALSE;
     time_t now, past=(time_t)0;
     int inputPorts;
     
     while ( TRUE ) {
-        // blink left LED once a second and read sonar
+        // once a second
         now=time(NULL);
         if ( now != past ) {
-            if ( leftLED ) {
-                arduino.setIoPortHigh(LED_LEFT);
+            // blink green LED
+            if ( ledGreen ) {
+                arduino.setIoPortHigh(LED_GREEN);
             } else {
-                arduino.setIoPortLow(LED_LEFT);
+                arduino.setIoPortLow(LED_GREEN);
             }
-            leftLED = !leftLED;
+            ledGreen = !ledGreen;
             past = now;
         }
         
-        // Toggle right LED on button release
+        // Toggle red LED on button release
         inputPorts=arduino.getIoPorts();
         if ( buttonPressed ) {
             if ( inputPorts & BUTTON ) {
-                if ( rightLED ) {
-                    arduino.setIoPortHigh(LED_RIGHT);
+                if ( ledRed ) {
+                    arduino.setIoPortLow(LED_RED);
                 } else {
-                    arduino.setIoPortLow(LED_RIGHT);
+                    arduino.setIoPortHigh(LED_RED);
                 }
-                rightLED = !rightLED;
+                ledRed = !ledRed;
                 buttonPressed = FALSE;
             }
         } else if ( !(inputPorts & BUTTON) ) {

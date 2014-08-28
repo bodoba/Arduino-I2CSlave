@@ -55,10 +55,6 @@ public:
     bool setServoValue ( unsigned char servo, int value );
     bool setServoUSec ( unsigned char servo, int value );
     bool getStatus( uint8_t *status );
-#ifdef USE_SONAR
-    bool setSonarPort( uint16_t port, uint16_t maxDistance );
-    uint16_t getSonarReading( void );
-#endif
     
 private:
     uint8_t arduinoAddress;
