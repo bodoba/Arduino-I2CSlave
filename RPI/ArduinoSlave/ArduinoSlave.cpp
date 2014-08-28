@@ -145,18 +145,18 @@ bool ArduinoSlave::getStatus (uint8_t *status) {
 uint16_t ArduinoSlave::getIoPorts ( void ) {
     bool     success = FALSE;
     uint8_t  data[2] = {0,0};
-    uint16_t ioPorts;
+    uint16_t ioPorts = 0;
 
     if ( i2cWriteCmd(I2CCMD_GET_IO_PORTS, 0, NULL) ) {
         success = i2cReadBytes(2, data);
     }
     if ( !success ) {
         fprintf(stderr, "[ERROR] ArduinoSlave::getIoPorts(...) failed. %s\n", i2cErrorString);
+    } else {
+        ioPorts = ( data[0] & 0x00ff ) | ((data[1] << 8) & 0xff00 );
     }
-    ioPorts = ( data[0] & 0x00ff ) | ((data[1] << 8) & 0xff00 );
     return (ioPorts);
 }
-
 
 #ifdef USE_SONAR
 bool ArduinoSlave::setSonarPort( uint16_t port, uint16_t maxDistance ) {

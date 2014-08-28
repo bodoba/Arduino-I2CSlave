@@ -14,6 +14,7 @@
 #define LED_LEFT     ARDUINO_IO_PORT_09
 
 #define BUTTON       ARDUINO_IO_PORT_07
+#define SONAR        ARDUINO_IO_PORT_06
 
 
 int main(int argc, char **argv)
@@ -34,8 +35,16 @@ int main(int argc, char **argv)
         printf ("[FATAL] Could not set up BUTTON port\n");
         exit(1);
     }
-
     usleep(5000);
+    
+    // Sonar
+    if ( !arduino.setSonarPort(SONAR,50)) {
+        printf ("[FATAL] Could not set up Sonar port\n");
+        exit(1);
+    }
+    usleep(5000);
+    
+    
     bool leftLED       = FALSE;
     bool rightLED      = FALSE;
     bool buttonPressed = FALSE;
@@ -43,7 +52,7 @@ int main(int argc, char **argv)
     int inputPorts;
     
     while ( TRUE ) {
-        // blink left LED once a second
+        // blink left LED once a second and read sonar
         now=time(NULL);
         if ( now != past ) {
             if ( leftLED ) {
