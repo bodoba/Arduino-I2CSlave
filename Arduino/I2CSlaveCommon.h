@@ -52,6 +52,7 @@
 #define I2CCMD_GET_STATUS                9
 #define I2CCMD_SET_SONAR_PORT           10
 #define I2CCMD_GET_SONAR_READING        11
+#define I2CCMD_GET_ANALOG_READING       12
 
 /*
  * IO Port Mode
@@ -76,6 +77,13 @@
 #define ARDUINO_IO_PORT_11   0x0400
 #define ARDUINO_IO_PORT_12   0x0800
 #define ARDUINO_IO_PORT_13   0x1000
+
+#define ARDUINO_ANALOG_PORT_00   0
+#define ARDUINO_ANALOG_PORT_01   1
+#define ARDUINO_ANALOG_PORT_02   2
+#define ARDUINO_ANALOG_PORT_03   3
+#define ARDUINO_ANALOG_PORT_04   4
+#define ARDUINO_ANALOG_PORT_05   5
 
 /*
  * Adresses for four servos 

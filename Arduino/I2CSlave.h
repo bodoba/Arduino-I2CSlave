@@ -59,6 +59,7 @@ private:
     void getSonarReading (unsigned char *);
 #endif
     
+    void getAnalogReading (unsigned char, unsigned char *);
     void setIOPortMode (int, int);
     void setIOPortModeServo (int, unsigned char);
     void setIOPort (int, int);

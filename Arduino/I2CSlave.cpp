@@ -143,6 +143,11 @@ void I2CSlaveClass::receiveData( int count )
             I2CSlave.outBuffer[0]=I2CSlave.status;
             I2CSlave.outBytes=1;
             break;
+        
+        case I2CCMD_GET_ANALOG_READING:
+            I2CSlave.getAnalogReading(inBuffer[1], I2CSlave.outBuffer);
+            I2CSlave.outBytes=1;
+            break;
             
 #ifdef USE_SONAR
         case I2CCMD_SET_SONAR_PORT:
@@ -156,8 +161,7 @@ void I2CSlaveClass::receiveData( int count )
             I2CSlave.outBytes=2;
             break;
 #endif
-            
-            
+        
         default:
             DEBUG_PRINT( "[ERROR] Unhandled Command Token" );
             DEBUG_PRINTLN( (int)inBuffer[0] );
@@ -187,6 +191,11 @@ void I2CSlaveClass::sendData(void)
  * --------------------------------------------------------------------------------------
  */
 
+/** Read analog port
+ */
+void I2CSlaveClass::getAnalogReading (unsigned char pin, unsigned char *value) {
+    *value = analogRead(pin);
+}
 
 /** Set port mode to input or output
  */
